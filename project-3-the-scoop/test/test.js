@@ -73,7 +73,7 @@ describe('Scoop - server.js: ', function() {
       };
     });
 
-    it('routes[\'/comments\'] should have a method called POST - here', function() {
+    it('routes[\'/comments\'] should have a method called POST', function() {
       expect(routes['/comments']['POST']).to.exist;
     });
 

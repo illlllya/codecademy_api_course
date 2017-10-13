@@ -51,15 +51,16 @@ const routes = {
 function createComment(url, request) {
   const response = {};
 
-  const comment = {
+  const newComment = {
     id: database.nextCommentId++,
     body: request.body,
     username: request.body.username,
   };
 
-  database.comments[comment.id] = comment;
+  database.comments[newComment.id] = newComment;
 
-  response.body = {comment: comment};
+
+  response.body = {comment: newComment};
 
   return response;
 }
