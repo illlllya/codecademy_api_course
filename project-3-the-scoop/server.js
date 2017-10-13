@@ -52,15 +52,16 @@ function createComment(url, request) {
   const response = {};
 
   const newComment = {
-    id: database.nextCommentId++,
+    id: database.nextCommentId,
     body: request.body,
     username: request.body.username,
   };
 
   database.comments[newComment.id] = newComment;
-
+  database.nextCommentId++
 
   response.body = {comment: newComment};
+  response.status = 201;
 
   return response;
 }
