@@ -49,28 +49,18 @@ const routes = {
 
 
 function createComment(url, request) {
-  const requestComment = request;
   const response = {};
 
-   if (requestComment.body) {
+  const comment = {
+    id: database.nextCommentId++,
+    body: request.body,
+    username: request.body.username,
+  };
 
-    const comment = {
-      id: database.nextCommentId++,
-      body: requestComment.body,
-      username: requestComment.body.username,
-      upvotedBy: [],
-      downvotedBy: []
-    };
+  database.comments[comment.id] = comment;
 
+  response.body = {comment: comment};
 
-    database.comments[comment.id] = comment;
-
-    response.body = {comment: requestComment};
-    response.status = 201;
-
-   } else {
-      response.status = 400;
-   }
   return response;
 }
 
