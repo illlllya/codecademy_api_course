@@ -7,6 +7,7 @@ let database = {
   nextCommentId: 1
 };
 
+
 const routes = {
   '/users': {
     'POST': getOrCreateUser
@@ -51,19 +52,33 @@ const routes = {
 function createComment(url, request) {
   const response = {};
 
-  const newComment = {
-    id: database.nextCommentId,
-    body: request.body,
-    username: request.body.username,
-  };
+  // console.log(request);
 
-  database.comments[newComment.id] = newComment;
-  database.nextCommentId++
+  if (request.body && (Object.keys(request.body).length >=1) && (database.articles[request.body.comment.articleId] === request.body.comment.articleId)) {
+    const newComment = {
+        id: database.nextCommentId,
+        body: request.body.comment.body,
+        username: request.body.comment.username,
+        articleId: request.body.comment.articleId,
+        upvotedBy: [],
+        downvotedBy: []
+      };
 
-  response.body = {comment: newComment};
-  response.status = 201;
+    database.nextCommentId++
+    database.comments[newComment.id] = newComment;
+    database.users[request.body.comment.username].commentIds.push(newComment.id);
+    database.articles[request.body.comment.articleId].commentIds.push(newComment.id)
+
+    response.body = {comment: newComment};
+    response.status = 201;
+    
+  } else {
+    response.status = 400;
+  }
+
 
   return response;
+
 }
 
 function updateComment(url, request) {
