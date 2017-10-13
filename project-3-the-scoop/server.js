@@ -50,24 +50,25 @@ const routes = {
 
 
 function createComment(url, request) {
+  const requestComment = request.body;
   const response = {};
 
-  // console.log(request);
+  // console.log(requestComment);
 
-  if (request.body && (Object.keys(request.body).length >=1) && (database.articles[request.body.comment.articleId] === request.body.comment.articleId)) {
+  if (requestComment && (Object.keys(requestComment).length >= 1) && (requestComment.comment.body) && database.articles[requestComment.comment.articleId] && database.users[requestComment.comment.username]) {
     const newComment = {
         id: database.nextCommentId,
-        body: request.body.comment.body,
-        username: request.body.comment.username,
-        articleId: request.body.comment.articleId,
+        body: requestComment.comment.body,
+        username: requestComment.comment.username,
+        articleId: requestComment.comment.articleId,
         upvotedBy: [],
         downvotedBy: []
       };
 
     database.nextCommentId++
     database.comments[newComment.id] = newComment;
-    database.users[request.body.comment.username].commentIds.push(newComment.id);
-    database.articles[request.body.comment.articleId].commentIds.push(newComment.id)
+    database.users[requestComment.comment.username].commentIds.push(newComment.id);
+    database.articles[requestComment.comment.articleId].commentIds.push(newComment.id)
 
     response.body = {comment: newComment};
     response.status = 201;
@@ -75,14 +76,30 @@ function createComment(url, request) {
   } else {
     response.status = 400;
   }
-
-
   return response;
 
 }
 
 function updateComment(url, request) {
+  const id = Number(url.split('/').filter(segment => segment)[1]); // gives back commentId
+  const savedComment = database.comments[id];
+  const updatedComment = request.body && request.body.comment.body;
+  const response = {};
+  
 
+  if (!id || !updatedComment) {
+    response.status = 400;
+  } else if (!savedComment) {
+    response.status = 404;
+  } else {
+
+    savedComment.body = updatedComment;
+
+    response.body = {comment: savedComment};
+    response.status = 200;
+  }
+
+  return response;
 }
 
 function deleteComment(url, request) {
@@ -186,8 +203,7 @@ function createArticle(url, request) {
   const requestArticle = request.body && request.body.article;
   const response = {};
 
-  if (requestArticle && requestArticle.title && requestArticle.url &&
-      requestArticle.username && database.users[requestArticle.username]) {
+  if (requestArticle && requestArticle.title && requestArticle.url && requestArticle.username && database.users[requestArticle.username]) {
     const article = {
       id: database.nextArticleId++,
       title: requestArticle.title,
