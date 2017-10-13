@@ -3,14 +3,7 @@ let database = {
   users: {},
   articles: {},
   nextArticleId: 1,
-  comments: [
-    { commentId: 1,
-      body: "",
-      username: "",
-      upvotedBy: [],
-      downvotedBy: []
-    }
-  ],
+  comments: {},
   nextCommentId: 1
 };
 
@@ -60,17 +53,17 @@ function createComment(url, request) {
   const response = {};
 
    if (requestComment.body) {
+
     const comment = {
       id: database.nextCommentId++,
       body: requestComment.body,
-      username: requestComment.username,
-      commentIds: [],
+      username: requestComment.body.username,
       upvotedBy: [],
       downvotedBy: []
     };
 
-    database.comments[comment.id] = comments;
-    database.users[comment.username].commentIds.push(comment.id);
+
+    database.comments[comment.id] = comment;
 
     response.body = {comment: requestComment};
     response.status = 201;
@@ -78,24 +71,23 @@ function createComment(url, request) {
    } else {
       response.status = 400;
    }
-
   return response;
 }
 
 function updateComment(url, request) {
- console.log(url);
+
 }
 
 function deleteComment(url, request) {
- console.log(url);
+
 }
 
 function upvoteComment(url, request) {
- console.log(url);
+
 }
 
 function downvoteComment(url, request) {
- console.log(url);
+
 }
 
 
@@ -150,6 +142,7 @@ function getOrCreateUser(url, request) {
 
 function getArticles(url, request) {
   const response = {};
+  
 
   response.status = 200;
   response.body = {
@@ -158,7 +151,7 @@ function getArticles(url, request) {
         .filter(article => article)
         .sort((article1, article2) => article2.id - article1.id)
   };
-
+  
   return response;
 }
 
@@ -178,7 +171,7 @@ function getArticle(url, request) {
   } else {
     response.status = 400;
   }
-
+  
   return response;
 }
 
