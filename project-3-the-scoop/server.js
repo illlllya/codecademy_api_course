@@ -83,6 +83,7 @@ function createComment(url, request) {
 function updateComment(url, request) {
   const id = Number(url.split('/').filter(segment => segment)[1]); // gives back commentId
   const savedComment = database.comments[id];
+
   const updatedComment = request.body && request.body.comment.body;
   const response = {};
   
@@ -93,12 +94,13 @@ function updateComment(url, request) {
     response.status = 404;
   } else {
 
-    savedComment.body = updatedComment;
+    savedComment.body = updatedComment || savedComment;
 
     response.body = {comment: savedComment};
     response.status = 200;
   }
 
+  console.log(response.status);
   return response;
 }
 
